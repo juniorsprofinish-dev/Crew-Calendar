@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Junior's Pro Finish, LLC - Calendar, Scheduling & Revenue Goals</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.6); }
+    .touch-press:active { transform: scale(0.97); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-6 py-3">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      <!-- Brand & Phone -->
+      <div class="flex items-center space-x-3 w-full md:w-auto">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-800 flex items-center justify-center shadow-lg shadow-emerald-950 text-white font-black text-sm flex-shrink-0">
+          JPF
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-extrabold text-base sm:text-lg text-white leading-tight">Junior’s Pro Finish, LLC</h1>
+            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              Operations
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">
+            <span>Painting &bull; Drywall &bull; Finishing</span>
+            <span class="text-slate-600 mx-1">|</span>
+            <span class="text-emerald-400 font-semibold">(641) 261-3003</span>
+            <span class="text-slate-600 mx-1">&bull;</span>
+            <span class="text-slate-400">Toledo &bull; Marshalltown, IA</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800 w-full md:w-auto justify-center text-xs font-bold">
+        <button id="nav-btn-calendar" type="button" class="nav-tab touch-press px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white shadow-sm flex items-center space-x-1.5">
+          <span>📅 Calendar</span>
+        </button>
+        <button id="nav-btn-crew" type="button" class="nav-tab touch-press px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition flex items-center space-x-1.5">
+          <span>👥 Crew &amp; Hours</span>
+        </button>
+        <button id="nav-btn-goals" type="button" class="nav-tab touch-press px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition flex items-center space-x-1.5">
+          <span>🎯 Goals &amp; Revenue</span>
+        </button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
+        <button id="btn-top-add-shift" type="button" class="touch-press px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-950 transition flex items-center space-x-1.5">
+          <span class="text-sm">+</span>
+          <span>Schedule Shift</span>
+        </button>
+        <button id="btn-save-export" type="button" class="touch-press px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" title="Export Backup JSON">
+          💾 Backup
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LIVE REVENUE PACING STRIP -->
+  <section class="border-b border-slate-800/80 bg-slate-900/40 px-4 sm:px-6 py-3.5">
+    <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <!-- Weekly -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 space-y-1.5">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+          <span>This Week's Revenue</span>
+          <button id="btn-edit-target-week" type="button" class="text-emerald-400 hover:underline text-[10px] font-bold">Edit Target</button>
+        </div>
+        <div class="flex items-baseline space-x-1.5">
+          <span id="kpi-rev-week" class="text-xl sm:text-2xl font-black font-mono text-white">$0</span>
+          <span id="kpi-target-week" class="text-xs text-slate-500 font-mono">/ $4,500</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div id="bar-rev-week" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+          <span id="lbl-pct-week" class="text-emerald-400 font-bold">0% reached</span>
+          <span id="lbl-rem-week">$4,500 remaining</span>
+        </div>
+      </div>
+
+      <!-- Monthly -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 space-y-1.5">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+          <span>Current Month Revenue</span>
+          <button id="btn-edit-target-month" type="button" class="text-blue-400 hover:underline text-[10px] font-bold">Edit Target</button>
+        </div>
+        <div class="flex items-baseline space-x-1.5">
+          <span id="kpi-rev-month" class="text-xl sm:text-2xl font-black font-mono text-white">$0</span>
+          <span id="kpi-target-month" class="text-xs text-slate-500 font-mono">/ $18,000</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div id="bar-rev-month" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+          <span id="lbl-pct-month" class="text-blue-400 font-bold">0% reached</span>
+          <span id="lbl-rem-month">$18,000 remaining</span>
+        </div>
+      </div>
+
+      <!-- Yearly -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 space-y-1.5">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+          <span>Annual Revenue Target</span>
+          <button id="btn-edit-target-year" type="button" class="text-orange-400 hover:underline text-[10px] font-bold">Edit Target</button>
+        </div>
+        <div class="flex items-baseline space-x-1.5">
+          <span id="kpi-rev-year" class="text-xl sm:text-2xl font-black font-mono text-white">$0</span>
+          <span id="kpi-target-year" class="text-xs text-slate-500 font-mono">/ $220,000</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div id="bar-rev-year" class="bg-orange-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+          <span id="lbl-pct-year" class="text-orange-400 font-bold">0% reached</span>
+          <span id="lbl-rem-year">$220,000 remaining</span>
+        </div>
+      </div>
+
+      <!-- Crew Scheduled Hours -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 space-y-1.5">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+          <span>Scheduled Crew Hours</span>
+          <span id="kpi-active-crew-count" class="text-teal-400 text-[10px] font-bold">4 active crew</span>
+        </div>
+        <div class="flex items-baseline space-x-1.5">
+          <span id="kpi-hours-week" class="text-xl sm:text-2xl font-black font-mono text-emerald-400">0.0</span>
+          <span class="text-xs text-slate-500 font-mono">hrs this week</span>
+        </div>
+        <p id="kpi-shifts-sub" class="text-[11px] text-slate-400 mt-2">0 shifts booked on calendar</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- VIEW 1: CALENDAR -->
+    <div id="view-calendar" class="space-y-4">
+      <!-- Calendar Controls & Filters -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm">
+        <!-- Month Navigator -->
+        <div class="flex items-center space-x-2">
+          <button id="btn-month-prev" type="button" class="touch-press p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold border border-slate-700">◀</button>
+          <h2 id="calendar-title-label" class="text-base sm:text-lg font-black text-white min-w-[190px] text-center">October 2026</h2>
+          <button id="btn-month-next" type="button" class="touch-press p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold border border-slate-700">▶</button>
+          <button id="btn-month-today" type="button" class="touch-press px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm">Today</button>
+        </div>
+
+        <!-- Filter and View Mode Switch -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Worker Filter -->
+          <div class="flex items-center space-x-1.5 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800 text-xs">
+            <span class="text-slate-400">Crew:</span>
+            <select id="filter-worker-select" class="bg-transparent text-slate-200 font-bold focus:outline-none cursor-pointer">
+              <option value="ALL">All Crew</option>
+            </select>
+          </div>
+
+          <!-- Month vs Week View Buttons -->
+          <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold">
+            <button id="btn-view-month" type="button" class="touch-press px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white shadow-xs">Month</button>
+            <button id="btn-view-week" type="button" class="touch-press px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition">Week</button>
+          </div>
+
+          <!-- Add Shift Button -->
+          <button id="btn-cal-add-shift-btn" type="button" class="touch-press px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition">
+            + Book Shift
+          </button>
+        </div>
+      </div>
+
+      <!-- Calendar Grid Stage -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-3 sm:p-5 shadow-lg overflow-hidden">
+        <div id="calendar-mount-point"></div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: CREW & HOURS -->
+    <div id="view-crew" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 p-5 rounded-2xl border border-slate-800">
+        <div>
+          <h2 class="text-lg font-black text-white flex items-center space-x-2">
+            <span>👥 Crew Roster, Available Days &amp; Pay Rates</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">Manage trade painters, drywall finishers, pay rates, weekly target hours, and scheduled workdays.</p>
+        </div>
+        <button id="btn-open-add-crew-modal" type="button" class="touch-press px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md">
+          + Add New Crew Member
+        </button>
+      </div>
+
+      <!-- Crew Cards Grid -->
+      <div id="crew-roster-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+      <!-- Shifts Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+            <span>📋 All Scheduled Work Orders &amp; Shifts</span>
+          </h3>
+          <span id="lbl-total-shifts-badge" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-lg border border-emerald-800">0 Total Shifts</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                <th class="py-2.5 px-3">Date</th>
+                <th class="py-2.5 px-3">Job / Project</th>
+                <th class="py-2.5 px-3">Assigned Crew</th>
+                <th class="py-2.5 px-2 text-right">Hours</th>
+                <th class="py-2.5 px-3 text-right">Job Value</th>
+                <th class="py-2.5 px-3 text-center">Status</th>
+                <th class="py-2.5 px-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="shifts-table-tbody" class="divide-y divide-slate-800/80"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: GOALS & REVENUE -->
+    <div id="view-goals" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 p-5 rounded-2xl border border-slate-800">
+        <div>
+          <h2 class="text-lg font-black text-white flex items-center space-x-2">
+            <span>🎯 Revenue Targets &amp; Performance Goals</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">Every target is directly editable. Track weekly pacing, team quality benchmarks, and individual goals.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="btn-edit-revenue-benchmarks" type="button" class="touch-press px-3.5 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-500 text-white shadow">
+            ✏️ Edit Revenue Targets
+          </button>
+          <button id="btn-open-create-goal" type="button" class="touch-press px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow">
+            + Add New Goal
+          </button>
+        </div>
+      </div>
+
+      <!-- Business Goals Grid -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-extrabold text-slate-300 flex items-center space-x-2">
+          <span>🏆 Business Operations, Quality &amp; Safety Goals</span>
+        </h3>
+        <div id="business-goals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- Individual Crew Performance Goals -->
+      <div class="space-y-3 pt-2">
+        <h3 class="text-sm font-extrabold text-slate-300 flex items-center space-x-2">
+          <span>⭐ Individual Crew Member Goals &amp; Benchmarks</span>
+        </h3>
+        <div id="employee-goals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =========================================================================
+       MODALS
+       ========================================================================= -->
+
+  <!-- MODAL: SCHEDULE / EDIT SHIFT -->
+  <div id="modal-shift" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative my-8">
+      <div class="flex items-center justify-between pb-3.5 border-b border-slate-800">
+        <h3 id="modal-shift-title" class="text-base font-extrabold text-white">Schedule Workday / Job Shift</h3>
+        <button type="button" class="btn-close-modal text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <form id="form-shift" class="mt-4 space-y-3.5 text-xs">
+        <input type="hidden" id="shift-edit-id" value="">
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Select CRM Client Job / Project *</label>
+          <select id="shift-job-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-bold focus:ring-2 focus:ring-emerald-500"></select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Work Date *</label>
+            <input id="shift-date" type="date" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold focus:ring-2 focus:ring-emerald-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Trade / Task Type</label>
+            <select id="shift-trade" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:ring-2 focus:ring-emerald-500 font-semibold">
+              <option value="Drywall Finishing">Drywall Finishing</option>
+              <option value="Commercial Painting">Commercial Painting</option>
+              <option value="Residential Painting">Residential Painting</option>
+              <option value="Framing & Boarding">Framing &amp; Boarding</option>
+              <option value="Taping & Sanding">Taping &amp; Sanding</option>
+              <option value="Plaster Repair">Plaster Repair</option>
+              <option value="Trim & Cabinetry Enamel">Trim &amp; Cabinetry Enamel</option>
+              <option value="Punch List & QC Walkthrough">Punch List &amp; QC Walkthrough</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Crew Member Checkboxes -->
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Assign Crew Member(s) *</label>
+          <div id="shift-crew-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800"></div>
+        </div>
+
+        <!-- Times and Hours -->
+        <div class="grid grid-cols-3 gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Start Time</label>
+            <input id="shift-start-time" type="time" value="07:00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 font-mono font-bold text-white text-xs">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">End Time</label>
+            <input id="shift-end-time" type="time" value="15:30" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 font-mono font-bold text-white text-xs">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Hours</label>
+            <input id="shift-hours" type="number" step="0.5" min="1" max="24" value="8.0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 font-mono font-bold text-emerald-400 text-xs">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Estimated Job Value ($)</label>
+            <input id="shift-revenue" type="number" step="50" min="0" value="928" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-emerald-400 font-mono font-bold focus:ring-2 focus:ring-emerald-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Status</label>
+            <select id="shift-status" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold focus:ring-2 focus:ring-emerald-500">
+              <option value="Scheduled">Scheduled</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Job Location / Notes for Crew</label>
+          <input id="shift-notes" type="text" placeholder="e.g. Suite 210, 2 coats eggshell, lockbox #4821" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:ring-2 focus:ring-emerald-500">
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+          <button id="btn-delete-shift" type="button" class="touch-press text-rose-400 hover:text-rose-300 font-bold px-2 py-1 rounded hidden">Delete Shift</button>
+          <div class="flex items-center space-x-2 ml-auto">
+            <button type="button" class="btn-close-modal px-4 py-2 rounded-xl text-slate-400 hover:text-white font-semibold">Cancel</button>
+            <button type="submit" class="touch-press px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow">Save Shift</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT CREW MEMBER -->
+  <div id="modal-crew-member" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative my-8">
+      <div class="flex items-center justify-between pb-3.5 border-b border-slate-800">
+        <h3 id="modal-crew-title" class="text-base font-extrabold text-white">Add / Edit Crew Member</h3>
+        <button type="button" class="btn-close-modal text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <form id="form-crew-member" class="mt-4 space-y-3.5 text-xs">
+        <input type="hidden" id="crew-edit-id" value="">
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Full Name *</label>
+          <input id="crew-name" type="text" required placeholder="e.g. John Miller" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-bold focus:ring-2 focus:ring-emerald-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Trade / Role *</label>
+            <select id="crew-role" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold focus:ring-2 focus:ring-emerald-500">
+              <option value="Lead / Foreman">Lead / Foreman</option>
+              <option value="Journeyman">Journeyman</option>
+              <option value="Apprentice">Apprentice</option>
+              <option value="Helper">Helper</option>
+              <option value="Master Finisher">Master Finisher</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Phone Number</label>
+            <input id="crew-phone" type="tel" placeholder="(641) 555-0199" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:ring-2 focus:ring-emerald-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Hourly Pay Rate ($/hr)</label>
+            <input id="crew-pay-rate" type="number" step="0.5" min="10" value="24" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-emerald-400 font-mono font-bold focus:ring-2 focus:ring-emerald-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Client Billable Rate ($/hr)</label>
+            <input id="crew-billing-rate" type="number" step="1" min="15" value="65" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold focus:ring-2 focus:ring-emerald-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Weekly Target Hours</label>
+          <input id="crew-target-hours" type="number" step="1" min="10" max="60" value="40" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold focus:ring-2 focus:ring-emerald-500">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1.5">Scheduled Work Days (Select all that apply)</label>
+          <div class="grid grid-cols-6 gap-1.5" id="crew-days-checkboxes">
+            <label class="flex flex-col items-center p-2 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:bg-slate-800">
+              <input type="checkbox" value="Mon" checked class="crew-day-chk rounded text-emerald-600 focus:ring-emerald-500 mb-1">
+              <span class="font-bold text-[10px]">Mon</span>
+            </label>
+            <label class="flex flex-col items-center p-2 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:bg-slate-800">
+              <input type="checkbox" value="Tue" checked class="crew-day-chk rounded text-emerald-600 focus:ring-emerald-500 mb-1">
+              <span class="font-bold text-[10px]">Tue</span>
+            </label>
+            <label class="flex flex-col items-center p-2 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:bg-slate-800">
+              <input type="checkbox" value="Wed" checked class="crew-day-chk rounded text-emerald-600 focus:ring-emerald-500 mb-1">
+              <span class="font-bold text-[10px]">Wed</span>
+            </label>
+            <label class="flex flex-col items-center p-2 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:bg-slate-800">
+              <input type="checkbox" value="Thu" checked class="crew-day-chk rounded text-emerald-600 focus:ring-emerald-500 mb-1">
+              <span class="font-bold text-[10px]">Thu</span>
+            </label>
+            <label class="flex flex-col items-center p-2 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:bg-slate-800">
+              <input type="checkbox" value="Fri" checked class="crew-day-chk rounded text-emerald-600 focus:ring-emerald-500 mb-1">
+              <span class="font-bold text-[10px]">Fri</span>
+            </label>
+            <label class="flex flex-col items-center p-2 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:bg-slate-800">
+              <input type="checkbox" value="Sat" class="crew-day-chk rounded text-emerald-600 focus:ring-emerald-500 mb-1">
+              <span class="font-bold text-[10px]">Sat</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Individual Worker Goal</label>
+          <input id="crew-goal-text" type="text" placeholder="e.g. Complete Level 4 corner taping under 45 mins" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:ring-2 focus:ring-emerald-500">
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+          <button id="btn-delete-crew-member" type="button" class="touch-press text-rose-400 hover:text-rose-300 font-bold px-2 py-1 rounded hidden">Delete Member</button>
+          <div class="flex items-center space-x-2 ml-auto">
+            <button type="button" class="btn-close-modal px-4 py-2 rounded-xl text-slate-400 hover:text-white font-semibold">Cancel</button>
+            <button type="submit" class="touch-press px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow">Save Member</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT GOAL -->
+  <div id="modal-goal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative my-8">
+      <div class="flex items-center justify-between pb-3.5 border-b border-slate-800">
+        <h3 id="modal-goal-title" class="text-base font-extrabold text-white">Add / Edit Goal</h3>
+        <button type="button" class="btn-close-modal text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <form id="form-goal" class="mt-4 space-y-3.5 text-xs">
+        <input type="hidden" id="goal-edit-id" value="">
+        <input type="hidden" id="goal-type-flag" value="business">
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Goal Description / Title *</label>
+          <input id="goal-title" type="text" required placeholder="e.g. Land 3 new commercial General Contractor accounts" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-bold focus:ring-2 focus:ring-emerald-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Category / Assignee</label>
+            <select id="goal-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold focus:ring-2 focus:ring-emerald-500">
+              <option value="Operations">Operations</option>
+              <option value="Safety">Safety & Compliance</option>
+              <option value="Quality Control">Quality Control</option>
+              <option value="Commercial Bidding">Commercial Bidding</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Cadence / Timeframe</label>
+            <select id="goal-timeframe" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold focus:ring-2 focus:ring-emerald-500">
+              <option value="Weekly">Weekly</option>
+              <option value="Monthly" selected>Monthly</option>
+              <option value="Yearly">Yearly</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Current</label>
+            <input id="goal-current" type="number" step="1" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 font-mono font-bold text-white text-xs">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Target *</label>
+            <input id="goal-target" type="number" step="1" min="1" value="10" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 font-mono font-bold text-emerald-400 text-xs">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Unit</label>
+            <input id="goal-unit" type="text" value="jobs" placeholder="jobs, %, hrs" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 font-bold text-white text-xs">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Status</label>
+          <select id="goal-status" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold focus:ring-2 focus:ring-emerald-500">
+            <option value="In Progress">In Progress</option>
+            <option value="Achieved">Achieved / Completed</option>
+            <option value="On Hold">On Hold</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+          <button id="btn-delete-goal" type="button" class="touch-press text-rose-400 hover:text-rose-300 font-bold px-2 py-1 rounded hidden">Delete Goal</button>
+          <div class="flex items-center space-x-2 ml-auto">
+            <button type="button" class="btn-close-modal px-4 py-2 rounded-xl text-slate-400 hover:text-white font-semibold">Cancel</button>
+            <button type="submit" class="touch-press px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow">Save Goal</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIGURE REVENUE BENCHMARKS -->
+  <div id="modal-revenue-targets" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3.5 border-b border-slate-800">
+        <h3 class="text-base font-extrabold text-white">Edit Revenue Benchmarks</h3>
+        <button type="button" class="btn-close-modal text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <form id="form-revenue-targets" class="mt-4 space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Weekly Revenue Target ($)</label>
+          <input id="input-target-weekly" type="number" step="250" min="500" value="4500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-emerald-400 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Monthly Revenue Target ($)</label>
+          <input id="input-target-monthly" type="number" step="1000" min="1000" value="18000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-blue-400 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Yearly Revenue Target ($)</label>
+          <input id="input-target-yearly" type="number" step="5000" min="5000" value="220000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-orange-400 font-mono font-bold">
+        </div>
+        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-800">
+          <button type="button" class="btn-close-modal px-4 py-2 rounded-xl text-slate-400 hover:text-white font-semibold">Cancel</button>
+          <button type="submit" class="touch-press px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold shadow">Save Targets</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none max-w-sm w-full"></div>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    // State Store Initialization
+    const AppState = {
+      activeTab: 'calendar',
+      viewMode: 'month', // 'month' | 'week'
+      currentDate: new Date(),
+      revenueGoals: {
+        weekly: 4500,
+        monthly: 18000,
+        yearly: 220000
+      },
+      workers: [
+        { id: 'w-junior', name: 'Junior Rodriguez', role: 'Owner & Master Finisher', payRate: 48, billingRate: 85, targetHours: 40, workDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], phone: '(641) 261-3003', goal: 'Direct architect walkthroughs & estimate 3 new jobs/mo' },
+        { id: 'w-felipe', name: 'Felipe', role: 'Lead / Foreman', payRate: 28, billingRate: 75, targetHours: 40, workDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], phone: '(515) 555-0192', goal: 'Zero punch list callbacks on drywall finishing' },
+        { id: 'w-pablo', name: 'Pablo', role: 'Journeyman', payRate: 24, billingRate: 65, targetHours: 40, workDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], phone: '(641) 555-4819', goal: 'Lead commercial spray setups on corridor corridors' },
+        { id: 'w-erling', name: 'Erling', role: 'Journeyman', payRate: 24, billingRate: 65, targetHours: 38, workDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], phone: '(515) 555-3921', goal: 'Independent Level 4 drywall seam coating' },
+        { id: 'w-bianca', name: 'Bianca', role: 'Helper', payRate: 18, billingRate: 40, targetHours: 35, workDays: ['Mon', 'Tue', 'Wed', 'Thu'], phone: '(641) 555-8821', goal: 'Floor protection & masking prep under 30 mins/room' }
+      ],
+      calendarShifts: [
+        {
+          id: 'cs-1',
+          date: new Date().toISOString().split('T')[0],
+          jobId: 'job-apex-104',
+          jobTitle: 'Apex Commercial Real Estate (Marshalltown Medical)',
+          trade: 'Drywall Finishing',
+          assignedWorkers: ['Junior Rodriguez', 'Felipe'],
+          startTime: '07:00',
+          endTime: '15:30',
+          hours: 8.0,
+          revenue: 1360,
+          status: 'In Progress',
+          notes: 'Level 5 drywall skim coat & PVA prime corridors'
+        },
+        {
+          id: 'cs-2',
+          date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+          jobId: 'job-toledo-res',
+          jobTitle: 'Toledo Residential Interior Repaint (Miller Residence)',
+          trade: 'Residential Painting',
+          assignedWorkers: ['Pablo', 'Erling'],
+          startTime: '07:30',
+          endTime: '15:30',
+          hours: 7.5,
+          revenue: 975,
+          status: 'Scheduled',
+          notes: 'Two finish coats ProMar 200 eggshell on living room'
+        }
+      ],
+      businessGoals: [
+        { id: 'bg-1', title: 'Maintain 98% On-Time Commercial Jobsite Completion', category: 'Operations', target: 98, current: 97, unit: '%', timeframe: 'Monthly', status: 'In Progress' },
+        { id: 'bg-2', title: 'Land 3 New Commercial General Contractor Accounts', category: 'Commercial Bidding', target: 3, current: 2, unit: 'contracts', timeframe: 'Monthly', status: 'In Progress' },
+        { id: 'bg-3', title: 'Graco Airless & Festool Planex Scheduled Maintenance', category: 'Quality Control', target: 4, current: 4, unit: 'flushes', timeframe: 'Monthly', status: 'Achieved' }
+      ],
+      employeeGoals: [
+        { id: 'eg-1', title: 'Pablo: Lead Corridor Airless Spray Setup', category: 'Pablo', target: 8, current: 7, unit: 'units', timeframe: 'Monthly', status: 'In Progress' },
+        { id: 'eg-2', title: 'Felipe: Crew Safety & Dust Containment Audits', category: 'Felipe', target: 4, current: 4, unit: 'audits', timeframe: 'Monthly', status: 'Achieved' },
+        { id: 'eg-3', title: 'Erling: Level 4 Drywall Skim Pace (40 sheets/day)', category: 'Erling', target: 40, current: 36, unit: 'sheets', timeframe: 'Weekly', status: 'In Progress' }
+      ]
+    };
+
+    // Load from Local Storage (seamlessly checks CRM state if available)
+    function loadState() {
+      try {
+        const saved = localStorage.getItem('juniors_pro_finish_calendar_data');
+        if (saved) {
+          Object.assign(AppState, JSON.parse(saved));
+        } else {
+          // Attempt to pull crew and jobs from the CRM state
+          const crmStateRaw = localStorage.getItem('juniors_pro_finish_app_state');
+          if (crmStateRaw) {
+            const crm = JSON.parse(crmStateRaw);
+            if (Array.isArray(crm.workers) && crm.workers.length > 0) {
+              AppState.workers = crm.workers.map(w => ({
+                id: w.id || ('w-' + Math.random().toString(36).substr(2, 5)),
+                name: w.name,
+                role: w.defaultRole || 'Journeyman',
+                payRate: Number(w.actualWage) || 24,
+                billingRate: 65,
+                targetHours: 40,
+                workDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                phone: w.phone || '',
+                goal: 'Quality finish & clean workmanship'
+              }));
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Storage load fallback:', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('juniors_pro_finish_calendar_data', JSON.stringify(AppState));
+      } catch (e) {
+        console.warn('Storage save fallback:', e);
+      }
+    }
+
+    function showToast(msg, isSuccess = true) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const t = document.createElement('div');
+      t.className = `p-3.5 px-4 rounded-2xl shadow-2xl text-xs font-bold text-white transition-all transform duration-200 pointer-events-auto border ${
+        isSuccess ? 'bg-emerald-600 border-emerald-500' : 'bg-rose-600 border-rose-500'
+      }`;
+      t.textContent = msg;
+      container.appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = '0';
+        setTimeout(() => t.remove(), 250);
+      }, 2800);
+    }
+
+    const fmtCurr = (num) => '$' + (Number(num) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Pacing & KPI Calculation
+    function updateRevenuePacingAndKPIs() {
+      const now = AppState.currentDate || new Date();
+      const shifts = AppState.calendarShifts || [];
+
+      // Compute week bounds (Monday to Sunday)
+      const day = now.getDay();
+      const diffToMon = now.getDate() - day + (day === 0 ? -6 : 1);
+      const mon = new Date(now);
+      mon.setDate(diffToMon);
+      const sun = new Date(mon);
+      sun.setDate(mon.getDate() + 6);
+      const monStr = mon.toISOString().split('T')[0];
+      const sunStr = sun.toISOString().split('T')[0];
+
+      const curYear = now.getFullYear();
+      const curMonthStr = `${curYear}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      const curYearStr = String(curYear);
+
+      let weekRev = 0, monthRev = 0, yearRev = 0, weekHours = 0;
+
+      shifts.forEach(s => {
+        const rev = Number(s.revenue) || (Number(s.hours || 8) * (s.assignedWorkers?.length || 1) * 58);
+        const hrs = Number(s.hours) || 8;
+        if (s.date >= monStr && s.date <= sunStr) {
+          weekRev += rev;
+          weekHours += hrs;
+        }
+        if (s.date.startsWith(curMonthStr)) monthRev += rev;
+        if (s.date.startsWith(curYearStr)) yearRev += rev;
+      });
+
+      const g = AppState.revenueGoals;
+      const wPct = Math.min(100, Math.round((weekRev / (g.weekly || 1)) * 100));
+      const mPct = Math.min(100, Math.round((monthRev / (g.monthly || 1)) * 100));
+      const yPct = Math.min(100, Math.round((yearRev / (g.yearly || 1)) * 100));
+
+      document.getElementById('kpi-rev-week').textContent = fmtCurr(weekRev);
+      document.getElementById('kpi-target-week').textContent = `/ ${fmtCurr(g.weekly)}`;
+      document.getElementById('bar-rev-week').style.width = `${wPct}%`;
+      document.getElementById('lbl-pct-week').textContent = `${wPct}% reached`;
+      document.getElementById('lbl-rem-week').textContent = weekRev >= g.weekly ? 'Weekly goal met!' : `${fmtCurr(g.weekly - weekRev)} remaining`;
+
+      document.getElementById('kpi-rev-month').textContent = fmtCurr(monthRev);
+      document.getElementById('kpi-target-month').textContent = `/ ${fmtCurr(g.monthly)}`;
+      document.getElementById('bar-rev-month').style.width = `${mPct}%`;
+      document.getElementById('lbl-pct-month').textContent = `${mPct}% reached`;
+      document.getElementById('lbl-rem-month').textContent = monthRev >= g.monthly ? 'Monthly goal met!' : `${fmtCurr(g.monthly - monthRev)} remaining`;
+
+      document.getElementById('kpi-rev-year').textContent = fmtCurr(yearRev);
+      document.getElementById('kpi-target-year').textContent = `/ ${fmtCurr(g.yearly)}`;
+      document.getElementById('bar-rev-year').style.width = `${yPct}%`;
+      document.getElementById('lbl-pct-year').textContent = `${yPct}% reached`;
+      document.getElementById('lbl-rem-year').textContent = yearRev >= g.yearly ? 'Annual goal met!' : `${fmtCurr(g.yearly - yearRev)} remaining`;
+
+      document.getElementById('kpi-hours-week').textContent = weekHours.toFixed(1);
+      document.getElementById('kpi-shifts-sub').textContent = `${shifts.length} active shift(s) on calendar`;
+      document.getElementById('kpi-active-crew-count').textContent = `${(AppState.workers || []).length} active tradesmen`;
+      document.getElementById('lbl-total-shifts-badge').textContent = `${shifts.length} Total Shifts`;
+    }
+
+    // Render Calendar Mount Point
+    function renderCalendar() {
+      const stage = document.getElementById('calendar-mount-point');
+      if (!stage) return;
+
+      const cur = AppState.currentDate || new Date();
+      const year = cur.getFullYear();
+      const month = cur.getMonth();
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      document.getElementById('calendar-title-label').textContent = `${monthNames[month]} ${year}`;
+
+      const filterWorker = document.getElementById('filter-worker-select')?.value || 'ALL';
+      let shifts = AppState.calendarShifts || [];
+      if (filterWorker !== 'ALL') {
+        shifts = shifts.filter(s => (s.assignedWorkers || []).some(w => w.toLowerCase() === filterWorker.toLowerCase()));
+      }
+
+      const shiftsByDate = {};
+      shifts.forEach(s => {
+        if (!shiftsByDate[s.date]) shiftsByDate[s.date] = [];
+        shiftsByDate[s.date].push(s);
+      });
+
+      if (AppState.viewMode === 'month') {
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        let html = `
+          <div class="grid grid-cols-7 border-b border-slate-800 text-center font-extrabold text-slate-400 text-xs py-2 mb-1">
+            ${weekDays.map(d => `<div>${d}</div>`).join('')}
+          </div>
+          <div class="grid grid-cols-7 gap-1.5 sm:gap-2">
+        `;
+
+        for (let i = 0; i < firstDayIndex; i++) {
+          html += `<div class="min-h-[90px] sm:min-h-[115px] bg-slate-950/40 rounded-2xl border border-slate-900/60 p-2"></div>`;
+        }
+
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+          const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+          const dayShifts = shiftsByDate[dateStr] || [];
+          const isToday = dateStr === todayStr;
+
+          let dayTotalRev = 0;
+          dayShifts.forEach(s => dayTotalRev += (Number(s.revenue) || 0));
+
+          html += `
+            <div class="cal-day-cell min-h-[90px] sm:min-h-[115px] rounded-2xl border p-2 flex flex-col justify-between transition cursor-pointer group ${
+              isToday ? 'bg-emerald-950/20 border-emerald-500/60' : 'bg-slate-950 hover:bg-slate-800/80 border-slate-800'
+            }" data-date="${dateStr}">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-mono font-bold ${
+                  isToday ? 'w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shadow' : 'text-slate-300'
+                }">${dayNum}</span>
+                ${dayTotalRev > 0 ? `<span class="text-[10px] font-mono font-bold text-emerald-400">${fmtCurr(dayTotalRev).split('.')[0]}</span>` : ''}
+              </div>
+
+              <div class="space-y-1 overflow-y-auto max-h-[75px]">
+                ${dayShifts.map(s => `
+                  <div class="cal-shift-pill p-1 rounded-lg text-[10px] font-semibold bg-slate-900 border border-slate-700/80 hover:border-emerald-500 truncate transition" data-shift-id="${s.id}" title="${s.jobTitle} • ${(s.assignedWorkers || []).join(', ')}">
+                    <span class="text-emerald-400 font-extrabold">${(s.assignedWorkers || []).map(n => n.split(' ')[0]).join('+')}:</span>
+                    <span class="text-slate-200">${s.jobTitle}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="text-[9.5px] text-slate-500 opacity-0 group-hover:opacity-100 transition text-right pt-1">+ book</div>
+            </div>
+          `;
+        }
+
+        html += `</div>`;
+        stage.innerHTML = html;
+      } else {
+        // Week View
+        const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const curCopy = new Date(cur);
+        const day = curCopy.getDay();
+        const diff = curCopy.getDate() - day + (day === 0 ? -6 : 1);
+        const mon = new Date(curCopy);
+        mon.setDate(diff);
+
+        let html = `<div class="grid grid-cols-1 sm:grid-cols-7 gap-3">`;
+
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(mon);
+          d.setDate(mon.getDate() + i);
+          const dateStr = d.toISOString().split('T')[0];
+          const dayShifts = shiftsByDate[dateStr] || [];
+          const isToday = dateStr === new Date().toISOString().split('T')[0];
+
+          let dayTotalRev = 0;
+          dayShifts.forEach(s => dayTotalRev += (Number(s.revenue) || 0));
+
+          html += `
+            <div class="bg-slate-950 rounded-2xl border ${isToday ? 'border-emerald-500/60' : 'border-slate-800'} p-3 space-y-2 flex flex-col justify-between min-h-[360px]">
+              <div>
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                  <span class="font-extrabold text-xs text-slate-400 uppercase">${daysOfWeek[i]}</span>
+                  <span class="text-xs font-mono font-bold ${isToday ? 'px-2 py-0.5 rounded-full bg-emerald-600 text-white' : 'text-slate-200'}">${d.getMonth() + 1}/${d.getDate()}</span>
+                </div>
+                ${dayTotalRev > 0 ? `<div class="text-[11px] font-mono font-bold text-emerald-400 mb-2">${fmtCurr(dayTotalRev)} est.</div>` : ''}
+
+                <div class="space-y-2">
+                  ${dayShifts.length === 0 ? '<div class="text-xs text-slate-600 italic pt-8 text-center">Open day slot</div>' : ''}
+                  ${dayShifts.map(s => `
+                    <div class="cal-shift-pill bg-slate-900 p-2.5 rounded-xl border border-slate-800 hover:border-emerald-500 cursor-pointer transition text-xs space-y-1" data-shift-id="${s.id}">
+                      <div class="font-bold text-white truncate">${s.jobTitle}</div>
+                      <div class="text-[10px] text-slate-400 font-mono">${(s.assignedWorkers || []).join(', ')} • ${s.hours}h</div>
+                      <div class="flex items-center justify-between pt-1 border-t border-slate-800">
+                        <strong class="font-mono text-emerald-400">${fmtCurr(s.revenue)}</strong>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">${s.status}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <button type="button" class="btn-quick-book-slot touch-press w-full py-1.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800" data-date="${dateStr}">
+                + Book Day
+              </button>
+            </div>
+          `;
+        }
+
+        html += `</div>`;
+        stage.innerHTML = html;
+      }
+
+      attachCalendarEventListeners();
+    }
+
+    function attachCalendarEventListeners() {
+      document.querySelectorAll('.cal-day-cell, .btn-quick-book-slot').forEach(el => {
+        el.addEventListener('click', (e) => {
+          if (e.target.closest('.cal-shift-pill')) return;
+          openShiftModal(null, el.dataset.date);
+        });
+      });
+
+      document.querySelectorAll('.cal-shift-pill').forEach(pill => {
+        pill.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openShiftModal(pill.dataset.shiftId);
+        });
+      });
+    }
+
+    // Render Crew Roster Cards
+    function renderCrewRoster() {
+      const grid = document.getElementById('crew-roster-grid');
+      if (!grid) return;
+
+      const workers = AppState.workers || [];
+      const shifts = AppState.calendarShifts || [];
+
+      grid.innerHTML = workers.map(w => {
+        const days = w.workDays || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+        const workerShifts = shifts.filter(s => (s.assignedWorkers || []).some(name => name.toLowerCase() === w.name.toLowerCase()));
+        let totalHrs = 0;
+        workerShifts.forEach(s => totalHrs += (Number(s.hours) || 8));
+
+        return `
+          <div class="bg-slate-900 p-4 rounded-3xl border border-slate-800 shadow-sm flex flex-col justify-between space-y-3">
+            <div class="space-y-2.5">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white font-extrabold text-sm flex items-center justify-center shadow">
+                    ${w.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 class="font-extrabold text-sm text-white">${w.name}</h4>
+                    <p class="text-xs text-slate-400">${w.role} &bull; ${w.phone || 'No phone'}</p>
+                  </div>
+                </div>
+                <button type="button" class="btn-edit-crew touch-press p-1.5 rounded-lg text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700" data-id="${w.id}">
+                  ✏️
+                </button>
+              </div>
+
+              <!-- Rates and target -->
+              <div class="grid grid-cols-2 gap-2 bg-slate-950 p-2.5 rounded-2xl border border-slate-800/80 text-xs">
+                <div>
+                  <span class="text-slate-500 block text-[10px] uppercase font-bold">Pay Rate</span>
+                  <strong class="text-emerald-400 font-mono">$${Number(w.payRate).toFixed(2)}/hr</strong>
+                </div>
+                <div>
+                  <span class="text-slate-500 block text-[10px] uppercase font-bold">Billable Rate</span>
+                  <strong class="text-slate-200 font-mono">$${Number(w.billingRate).toFixed(2)}/hr</strong>
+                </div>
+              </div>
+
+              <!-- Work Days -->
+              <div>
+                <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Scheduled Work Days</span>
+                <div class="flex flex-wrap gap-1">
+                  ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => {
+                    const active = days.includes(d);
+                    return `<span class="px-2 py-0.5 rounded text-[10px] font-bold ${active ? 'bg-emerald-950 text-emerald-300 border border-emerald-700' : 'bg-slate-950 text-slate-600'}">${d}</span>`;
+                  }).join('')}
+                </div>
+              </div>
+
+              ${w.goal ? `<p class="text-[11px] text-slate-400 bg-slate-950 p-2 rounded-xl border border-slate-800 italic">🎯 ${w.goal}</p>` : ''}
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs font-mono">
+              <span class="text-slate-400">Weekly Target: <strong>${w.targetHours || 40}h</strong></span>
+              <strong class="text-emerald-400">${totalHrs.toFixed(1)} hrs booked</strong>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      grid.querySelectorAll('.btn-edit-crew').forEach(btn => {
+        btn.addEventListener('click', () => openCrewMemberModal(btn.dataset.id));
+      });
+    }
+
+    // Render All Shifts Table
+    function renderShiftsTable() {
+      const tbody = document.getElementById('shifts-table-tbody');
+      if (!tbody) return;
+
+      const shifts = [...(AppState.calendarShifts || [])].sort((a, b) => b.date.localeCompare(a.date));
+      if (shifts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="py-6 text-center text-slate-500 italic">No shifts recorded yet. Tap "+ Schedule Shift" above.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = shifts.map(s => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="py-3 px-3 font-mono font-bold text-white whitespace-nowrap">${s.date}</td>
+          <td class="py-3 px-3">
+            <div class="font-bold text-slate-200">${s.jobTitle}</div>
+            <div class="text-[10px] text-slate-400">${s.trade || 'Finishing'} &bull; ${s.notes || ''}</div>
+          </td>
+          <td class="py-3 px-3 text-slate-300 font-semibold">${(s.assignedWorkers || []).join(', ')}</td>
+          <td class="py-3 px-2 text-right font-mono font-bold text-slate-200">${s.hours}h</td>
+          <td class="py-3 px-3 text-right font-mono font-bold text-emerald-400">${fmtCurr(s.revenue)}</td>
+          <td class="py-3 px-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${
+              s.status === 'Completed' ? 'bg-emerald-950 text-emerald-300 border border-emerald-700' :
+              s.status === 'In Progress' ? 'bg-blue-950 text-blue-300 border border-blue-700' :
+              'bg-slate-800 text-slate-400'
+            }">${s.status}</span>
+          </td>
+          <td class="py-3 px-3 text-right whitespace-nowrap">
+            <button type="button" class="btn-edit-shift-row px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold mr-1" data-id="${s.id}">Edit</button>
+            <button type="button" class="btn-push-shift-to-crm px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold" data-id="${s.id}" title="Send shift hours directly to Invoice Labor Ledger">Ledger &rarr;</button>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.querySelectorAll('.btn-edit-shift-row').forEach(btn => {
+        btn.addEventListener('click', () => openShiftModal(btn.dataset.id));
+      });
+
+      tbody.querySelectorAll('.btn-push-shift-to-crm').forEach(btn => {
+        btn.addEventListener('click', () => pushShiftToInvoiceLedger(btn.dataset.id));
+      });
+    }
+
+    // Push Shift into Active CRM Invoice Ledger
+    function pushShiftToInvoiceLedger(shiftId) {
+      const shift = (AppState.calendarShifts || []).find(s => s.id === shiftId);
+      if (!shift) return;
+
+      const workers = (shift.assignedWorkers && shift.assignedWorkers.length) ? shift.assignedWorkers : ['Junior Rodriguez'];
+      const hours = Number(shift.hours) || 8.0;
+
+      // Transfer directly to CRM State if user uses the CRM file on this computer
+      try {
+        const raw = localStorage.getItem('juniors_pro_finish_app_state');
+        if (raw) {
+          const crm = JSON.parse(raw);
+          if (!Array.isArray(crm.laborEntries)) crm.laborEntries = [];
+          workers.forEach(wName => {
+            crm.laborEntries.push({
+              id: 'lab-cal-' + Date.now().toString(36) + Math.random().toString(36).substr(2, 3),
+              date: shift.date,
+              worker: wName,
+              role: 'Journeyman',
+              rate: 65,
+              hours: hours,
+              phase: 'Base Scope',
+              task: `${shift.jobTitle}: ${shift.notes || 'Contract finishing labor'}`
+            });
+          });
+          localStorage.setItem('juniors_pro_finish_app_state', JSON.stringify(crm));
+        }
+      } catch (e) {
+        console.warn('CRM sync warning:', e);
+      }
+
+      showToast(`Transferred ${hours} hrs for ${workers.join(' & ')} into Invoice Ledger!`);
+    }
+
+    // Render Goals Grids (Business & Employee)
+    function renderGoalsViews() {
+      const bGrid = document.getElementById('business-goals-grid');
+      const eGrid = document.getElementById('employee-goals-grid');
+      if (!bGrid || !eGrid) return;
+
+      const bGoals = AppState.businessGoals || [];
+      const eGoals = AppState.employeeGoals || [];
+
+      bGrid.innerHTML = bGoals.map(g => renderSingleGoalCard(g, 'business')).join('');
+      eGrid.innerHTML = eGoals.map(g => renderSingleGoalCard(g, 'employee')).join('');
+
+      attachGoalCardListeners();
+    }
+
+    function renderSingleGoalCard(g, type) {
+      const pct = Math.min(100, Math.round(((Number(g.current) || 0) / (Number(g.target) || 1)) * 100));
+      const isDone = g.status === 'Achieved' || pct >= 100;
+
+      return `
+        <div class="bg-slate-900 p-4 rounded-3xl border ${isDone ? 'border-emerald-600 bg-emerald-950/20' : 'border-slate-800'} space-y-3 shadow-sm">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center space-x-1.5 mb-1">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                  g.timeframe === 'Weekly' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
+                  g.timeframe === 'Monthly' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
+                  'bg-orange-950 text-orange-300 border border-orange-800'
+                }">${g.timeframe || 'Monthly'}</span>
+                <span class="text-[10px] text-slate-400 font-bold">${g.category || 'General'}</span>
+              </div>
+              <h4 class="font-bold text-sm text-white">${g.title}</h4>
+            </div>
+            <button type="button" class="btn-toggle-goal-status touch-press p-1.5 rounded-lg border ${
+              isDone ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-slate-800 text-slate-400 border-slate-700'
+            }" data-id="${g.id}" data-type="${type}" title="Toggle Complete">
+              ✓
+            </button>
+          </div>
+
+          <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+            <div class="h-full rounded-full transition-all duration-300 ${isDone ? 'bg-emerald-500' : 'bg-blue-500'}" style="width: ${pct}%"></div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-300 font-bold">${g.current} / ${g.target} ${g.unit}</span>
+            <span class="font-extrabold ${isDone ? 'text-emerald-400' : 'text-blue-400'}">${pct}%</span>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+            <div class="flex items-center space-x-1">
+              <button type="button" class="btn-step-goal touch-press px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold" data-id="${g.id}" data-type="${type}" data-step="-1">-1</button>
+              <button type="button" class="btn-step-goal touch-press px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold" data-id="${g.id}" data-type="${type}" data-step="1">+1</button>
+            </div>
+            <button type="button" class="btn-edit-goal touch-press text-slate-400 hover:text-white font-bold" data-id="${g.id}" data-type="${type}">
+              Edit Goal &rarr;
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachGoalCardListeners() {
+      document.querySelectorAll('.btn-toggle-goal-status').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const type = btn.dataset.type;
+          const arr = type === 'business' ? AppState.businessGoals : AppState.employeeGoals;
+          const g = (arr || []).find(item => item.id === id);
+          if (g) {
+            const isDone = g.status === 'Achieved';
+            g.status = isDone ? 'In Progress' : 'Achieved';
+            if (g.status === 'Achieved') g.current = g.target;
+            saveState();
+            renderGoalsViews();
+            showToast(`Goal updated: ${g.title}`);
+          }
+        });
+      });
+
+      document.querySelectorAll('.btn-step-goal').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const type = btn.dataset.type;
+          const step = parseInt(btn.dataset.step) || 1;
+          const arr = type === 'business' ? AppState.businessGoals : AppState.employeeGoals;
+          const g = (arr || []).find(item => item.id === id);
+          if (g) {
+            g.current = Math.max(0, (Number(g.current) || 0) + step);
+            if (g.current >= g.target) g.status = 'Achieved';
+            saveState();
+            renderGoalsViews();
+          }
+        });
+      });
+
+      document.querySelectorAll('.btn-edit-goal').forEach(btn => {
+        btn.addEventListener('click', () => {
+          openGoalModal(btn.dataset.id, btn.dataset.type);
+        });
+      });
+    }
+
+    // Modal Opening Handlers
+    function openShiftModal(shiftId = null, prefillDate = null) {
+      const modal = document.getElementById('modal-shift');
+      const title = document.getElementById('modal-shift-title');
+      const hiddenId = document.getElementById('shift-edit-id');
+      const dateIn = document.getElementById('shift-date');
+      const jobSel = document.getElementById('shift-job-select');
+      const startIn = document.getElementById('shift-start-time');
+      const endIn = document.getElementById('shift-end-time');
+      const hoursIn = document.getElementById('shift-hours');
+      const revIn = document.getElementById('shift-revenue');
+      const tradeSel = document.getElementById('shift-trade');
+      const statusSel = document.getElementById('shift-status');
+      const notesIn = document.getElementById('shift-notes');
+      const delBtn = document.getElementById('btn-delete-shift');
+      const crewContainer = document.getElementById('shift-crew-checkboxes');
+
+      // Populate CRM Jobs
+      let jobs = [
+        { id: 'job-apex-104', title: 'Apex Commercial Real Estate (Marshalltown Medical Plaza)' },
+        { id: 'job-toledo-res', title: 'Toledo Residential Interior Repaint (Miller Residence)' },
+        { id: 'job-meskwaki-center', title: 'Meskwaki Community Center Hallway Refresh' },
+        { id: 'job-tama-retail', title: 'Tama Downtown Retail Showroom & Accent Wall' }
+      ];
+
+      try {
+        const crmRaw = localStorage.getItem('juniors_pro_finish_app_state');
+        if (crmRaw) {
+          const crm = JSON.parse(crmRaw);
+          if (Array.isArray(crm.savedJobs) && crm.savedJobs.length > 0) {
+            jobs = crm.savedJobs.map(j => ({ id: j.id, title: j.client?.name || j.title }));
+          }
+        }
+      } catch (e) {}
+
+      jobSel.innerHTML = jobs.map(j => `<option value="${j.id}">${j.title}</option>`).join('') + '<option value="bid-walkthrough">Commercial Bid Walkthrough / Estimate</option>';
+
+      let s = null;
+      if (shiftId) {
+        s = (AppState.calendarShifts || []).find(item => item.id === shiftId);
+      }
+
+      if (s) {
+        title.textContent = 'Edit Scheduled Work Shift';
+        hiddenId.value = s.id;
+        dateIn.value = s.date;
+        jobSel.value = s.jobId || jobs[0].id;
+        startIn.value = s.startTime || '07:00';
+        endIn.value = s.endTime || '15:30';
+        hoursIn.value = s.hours || 8.0;
+        revIn.value = s.revenue || 928;
+        tradeSel.value = s.trade || 'Drywall Finishing';
+        statusSel.value = s.status || 'Scheduled';
+        notesIn.value = s.notes || '';
+        delBtn.classList.remove('hidden');
+      } else {
+        title.textContent = 'Schedule Workday / Shift';
+        hiddenId.value = '';
+        dateIn.value = prefillDate || new Date().toISOString().split('T')[0];
+        jobSel.value = jobs[0].id;
+        startIn.value = '07:00';
+        endIn.value = '15:30';
+        hoursIn.value = 8.0;
+        revIn.value = 928;
+        tradeSel.value = 'Drywall Finishing';
+        statusSel.value = 'Scheduled';
+        notesIn.value = '';
+        delBtn.classList.add('hidden');
+      }
+
+      const assigned = s ? (s.assignedWorkers || []) : ['Pablo', 'Felipe'];
+      crewContainer.innerHTML = (AppState.workers || []).map(w => {
+        const isChecked = assigned.some(name => name.toLowerCase() === w.name.toLowerCase());
+        return `
+          <label class="flex items-center space-x-1.5 cursor-pointer font-bold text-white text-xs">
+            <input type="checkbox" value="${w.name}" class="chk-shift-worker rounded text-emerald-600 focus:ring-emerald-500" ${isChecked ? 'checked' : ''}>
+            <span>${w.name}</span>
+          </label>
+        `;
+      }).join('');
+
+      modal.classList.remove('hidden');
+    }
+
+    function openCrewMemberModal(workerId = null) {
+      const modal = document.getElementById('modal-crew-member');
+      const title = document.getElementById('modal-crew-title');
+      const hiddenId = document.getElementById('crew-edit-id');
+      const nameIn = document.getElementById('crew-name');
+      const roleIn = document.getElementById('crew-role');
+      const phoneIn = document.getElementById('crew-phone');
+      const payIn = document.getElementById('crew-pay-rate');
+      const billIn = document.getElementById('crew-billing-rate');
+      const hrsIn = document.getElementById('crew-target-hours');
+      const goalIn = document.getElementById('crew-goal-text');
+      const delBtn = document.getElementById('btn-delete-crew-member');
+
+      let w = null;
+      if (workerId) {
+        w = (AppState.workers || []).find(item => item.id === workerId);
+      }
+
+      if (w) {
+        title.textContent = 'Edit Crew Member';
+        hiddenId.value = w.id;
+        nameIn.value = w.name;
+        roleIn.value = w.role || 'Journeyman';
+        phoneIn.value = w.phone || '';
+        payIn.value = w.payRate || 24;
+        billIn.value = w.billingRate || 65;
+        hrsIn.value = w.targetHours || 40;
+        goalIn.value = w.goal || '';
+        delBtn.classList.remove('hidden');
+
+        const activeDays = w.workDays || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+        document.querySelectorAll('.crew-day-chk').forEach(c => c.checked = activeDays.includes(c.value));
+      } else {
+        title.textContent = 'Add New Crew Member';
+        hiddenId.value = '';
+        nameIn.value = '';
+        roleIn.value = 'Journeyman';
+        phoneIn.value = '';
+        payIn.value = 24;
+        billIn.value = 65;
+        hrsIn.value = 40;
+        goalIn.value = '';
+        delBtn.classList.add('hidden');
+        document.querySelectorAll('.crew-day-chk').forEach(c => c.checked = c.value !== 'Sat');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function openGoalModal(goalId = null, goalType = 'business') {
+      const modal = document.getElementById('modal-goal');
+      const title = document.getElementById('modal-goal-title');
+      const hiddenId = document.getElementById('goal-edit-id');
+      const typeFlag = document.getElementById('goal-type-flag');
+      const titleIn = document.getElementById('goal-title');
+      const catIn = document.getElementById('goal-category');
+      const timeIn = document.getElementById('goal-timeframe');
+      const curIn = document.getElementById('goal-current');
+      const tarIn = document.getElementById('goal-target');
+      const unitIn = document.getElementById('goal-unit');
+      const statIn = document.getElementById('goal-status');
+      const delBtn = document.getElementById('btn-delete-goal');
+
+      typeFlag.value = goalType;
+
+      const arr = goalType === 'business' ? AppState.businessGoals : AppState.employeeGoals;
+      let g = null;
+      if (goalId) {
+        g = (arr || []).find(item => item.id === goalId);
+      }
+
+      if (g) {
+        title.textContent = `Edit ${goalType === 'business' ? 'Business' : 'Crew'} Goal`;
+        hiddenId.value = g.id;
+        titleIn.value = g.title;
+        catIn.value = g.category || 'Operations';
+        timeIn.value = g.timeframe || 'Monthly';
+        curIn.value = g.current || 0;
+        tarIn.value = g.target || 10;
+        unitIn.value = g.unit || 'units';
+        statIn.value = g.status || 'In Progress';
+        delBtn.classList.remove('hidden');
+      } else {
+        title.textContent = `Add New ${goalType === 'business' ? 'Business' : 'Crew'} Goal`;
+        hiddenId.value = '';
+        titleIn.value = '';
+        catIn.value = 'Operations';
+        timeIn.value = 'Monthly';
+        curIn.value = 0;
+        tarIn.value = 10;
+        unitIn.value = 'jobs';
+        statIn.value = 'In Progress';
+        delBtn.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    // Modal Forms Submissions
+    document.getElementById('form-shift')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('shift-edit-id').value;
+      const date = document.getElementById('shift-date').value;
+      const jobSel = document.getElementById('shift-job-select');
+      const jobId = jobSel.value;
+      const jobTitle = jobSel.options[jobSel.selectedIndex].text;
+      const trade = document.getElementById('shift-trade').value;
+      const startTime = document.getElementById('shift-start-time').value;
+      const endTime = document.getElementById('shift-end-time').value;
+      const hours = parseFloat(document.getElementById('shift-hours').value) || 8;
+      const revenue = parseFloat(document.getElementById('shift-revenue').value) || 928;
+      const status = document.getElementById('shift-status').value;
+      const notes = document.getElementById('shift-notes').value;
+
+      const assignedWorkers = Array.from(document.querySelectorAll('.chk-shift-worker:checked')).map(c => c.value);
+      const workers = assignedWorkers.length > 0 ? assignedWorkers : ['Junior Rodriguez'];
+
+      if (id) {
+        const s = (AppState.calendarShifts || []).find(item => item.id === id);
+        if (s) {
+          Object.assign(s, { date, jobId, jobTitle, trade, startTime, endTime, hours, revenue, status, notes, assignedWorkers: workers });
+        }
+      } else {
+        AppState.calendarShifts.push({
+          id: 'cs-' + Date.now().toString(36),
+          date,
+          jobId,
+          jobTitle,
+          trade,
+          startTime,
+          endTime,
+          hours,
+          revenue,
+          status,
+          notes,
+          assignedWorkers: workers
+        });
+      }
+
+      saveState();
+      updateRevenuePacingAndKPIs();
+      renderCalendar();
+      renderShiftsTable();
+      renderCrewRoster();
+      document.getElementById('modal-shift').classList.add('hidden');
+      showToast('Shift saved to calendar!');
+    });
+
+    document.getElementById('btn-delete-shift')?.addEventListener('click', () => {
+      const id = document.getElementById('shift-edit-id').value;
+      if (!id) return;
+      if (confirm('Delete this scheduled shift?')) {
+        AppState.calendarShifts = (AppState.calendarShifts || []).filter(item => item.id !== id);
+        saveState();
+        updateRevenuePacingAndKPIs();
+        renderCalendar();
+        renderShiftsTable();
+        renderCrewRoster();
+        document.getElementById('modal-shift').classList.add('hidden');
+        showToast('Shift removed');
+      }
+    });
+
+    document.getElementById('form-crew-member')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('crew-edit-id').value;
+      const name = document.getElementById('crew-name').value.trim();
+      const role = document.getElementById('crew-role').value;
+      const phone = document.getElementById('crew-phone').value.trim();
+      const payRate = parseFloat(document.getElementById('crew-pay-rate').value) || 24;
+      const billingRate = parseFloat(document.getElementById('crew-billing-rate').value) || 65;
+      const targetHours = parseFloat(document.getElementById('crew-target-hours').value) || 40;
+      const goal = document.getElementById('crew-goal-text').value.trim();
+
+      const workDays = Array.from(document.querySelectorAll('.crew-day-chk:checked')).map(c => c.value);
+
+      if (id) {
+        const w = (AppState.workers || []).find(item => item.id === id);
+        if (w) {
+          Object.assign(w, { name, role, phone, payRate, billingRate, targetHours, goal, workDays });
+        }
+      } else {
+        AppState.workers.push({
+          id: 'w-' + Date.now().toString(36),
+          name,
+          role,
+          phone,
+          payRate,
+          billingRate,
+          targetHours,
+          goal,
+          workDays
+        });
+      }
+
+      saveState();
+      updateCrewFilterSelect();
+      renderCrewRoster();
+      renderCalendar();
+      document.getElementById('modal-crew-member').classList.add('hidden');
+      showToast(`Saved crew member ${name}!`);
+    });
+
+    document.getElementById('btn-delete-crew-member')?.addEventListener('click', () => {
+      const id = document.getElementById('crew-edit-id').value;
+      if (!id) return;
+      if (confirm('Remove this crew member?')) {
+        AppState.workers = (AppState.workers || []).filter(item => item.id !== id);
+        saveState();
+        updateCrewFilterSelect();
+        renderCrewRoster();
+        document.getElementById('modal-crew-member').classList.add('hidden');
+        showToast('Crew member removed');
+      }
+    });
+
+    document.getElementById('form-goal')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('goal-edit-id').value;
+      const type = document.getElementById('goal-type-flag').value;
+      const title = document.getElementById('goal-title').value.trim();
+      const category = document.getElementById('goal-category').value;
+      const timeframe = document.getElementById('goal-timeframe').value;
+      const current = parseFloat(document.getElementById('goal-current').value) || 0;
+      const target = parseFloat(document.getElementById('goal-target').value) || 10;
+      const unit = document.getElementById('goal-unit').value.trim() || 'units';
+      const status = document.getElementById('goal-status').value;
+
+      const arr = type === 'business' ? AppState.businessGoals : AppState.employeeGoals;
+
+      if (id) {
+        const g = (arr || []).find(item => item.id === id);
+        if (g) Object.assign(g, { title, category, timeframe, current, target, unit, status });
+      } else {
+        arr.push({
+          id: (type === 'business' ? 'bg-' : 'eg-') + Date.now().toString(36),
+          title,
+          category,
+          timeframe,
+          current,
+          target,
+          unit,
+          status
+        });
+      }
+
+      saveState();
+      renderGoalsViews();
+      document.getElementById('modal-goal').classList.add('hidden');
+      showToast('Goal saved!');
+    });
+
+    document.getElementById('btn-delete-goal')?.addEventListener('click', () => {
+      const id = document.getElementById('goal-edit-id').value;
+      const type = document.getElementById('goal-type-flag').value;
+      if (!id) return;
+      if (confirm('Delete this goal?')) {
+        if (type === 'business') {
+          AppState.businessGoals = (AppState.businessGoals || []).filter(item => item.id !== id);
+        } else {
+          AppState.employeeGoals = (AppState.employeeGoals || []).filter(item => item.id !== id);
+        }
+        saveState();
+        renderGoalsViews();
+        document.getElementById('modal-goal').classList.add('hidden');
+        showToast('Goal deleted');
+      }
+    });
+
+    document.getElementById('form-revenue-targets')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      AppState.revenueGoals.weekly = parseFloat(document.getElementById('input-target-weekly').value) || 4500;
+      AppState.revenueGoals.monthly = parseFloat(document.getElementById('input-target-monthly').value) || 18000;
+      AppState.revenueGoals.yearly = parseFloat(document.getElementById('input-target-yearly').value) || 220000;
+      saveState();
+      updateRevenuePacingAndKPIs();
+      document.getElementById('modal-revenue-targets').classList.add('hidden');
+      showToast('Revenue targets updated!');
+    });
+
+    // Populate Crew Filter Dropdown
+    function updateCrewFilterSelect() {
+      const sel = document.getElementById('filter-worker-select');
+      if (!sel) return;
+      const cur = sel.value;
+      sel.innerHTML = '<option value="ALL">All Crew</option>' + (AppState.workers || []).map(w => `<option value="${w.name}">${w.name}</option>`).join('');
+      sel.value = cur || 'ALL';
+    }
+
+    // Modal Close Triggers
+    document.querySelectorAll('.btn-close-modal').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.fixed.inset-0.z-50').forEach(m => m.classList.add('hidden'));
+      });
+    });
+
+    // Tab Navigation
+    function switchTab(target) {
+      AppState.activeTab = target;
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        b.className = 'nav-tab touch-press px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition flex items-center space-x-1.5';
+      });
+      document.getElementById(`nav-btn-${target}`).className = 'nav-tab touch-press px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white shadow-sm flex items-center space-x-1.5';
+
+      document.getElementById('view-calendar').classList.toggle('hidden', target !== 'calendar');
+      document.getElementById('view-crew').classList.toggle('hidden', target !== 'crew');
+      document.getElementById('view-goals').classList.toggle('hidden', target !== 'goals');
+
+      if (target === 'calendar') renderCalendar();
+      if (target === 'crew') {
+        renderCrewRoster();
+        renderShiftsTable();
+      }
+      if (target === 'goals') renderGoalsViews();
+    }
+
+    document.getElementById('nav-btn-calendar').addEventListener('click', () => switchTab('calendar'));
+    document.getElementById('nav-btn-crew').addEventListener('click', () => switchTab('crew'));
+    document.getElementById('nav-btn-goals').addEventListener('click', () => switchTab('goals'));
+
+    // Calendar Navigation Triggers
+    document.getElementById('btn-month-prev').addEventListener('click', () => {
+      const d = new Date(AppState.currentDate);
+      if (AppState.viewMode === 'month') d.setMonth(d.getMonth() - 1);
+      else d.setDate(d.getDate() - 7);
+      AppState.currentDate = d;
+      updateRevenuePacingAndKPIs();
+      renderCalendar();
+    });
+
+    document.getElementById('btn-month-next').addEventListener('click', () => {
+      const d = new Date(AppState.currentDate);
+      if (AppState.viewMode === 'month') d.setMonth(d.getMonth() + 1);
+      else d.setDate(d.getDate() + 7);
+      AppState.currentDate = d;
+      updateRevenuePacingAndKPIs();
+      renderCalendar();
+    });
+
+    document.getElementById('btn-month-today').addEventListener('click', () => {
+      AppState.currentDate = new Date();
+      updateRevenuePacingAndKPIs();
+      renderCalendar();
+    });
+
+    document.getElementById('btn-view-month').addEventListener('click', () => {
+      AppState.viewMode = 'month';
+      document.getElementById('btn-view-month').className = 'touch-press px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white shadow-xs';
+      document.getElementById('btn-view-week').className = 'touch-press px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition';
+      renderCalendar();
+    });
+
+    document.getElementById('btn-view-week').addEventListener('click', () => {
+      AppState.viewMode = 'week';
+      document.getElementById('btn-view-week').className = 'touch-press px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white shadow-xs';
+      document.getElementById('btn-view-month').className = 'touch-press px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition';
+      renderCalendar();
+    });
+
+    document.getElementById('filter-worker-select')?.addEventListener('change', renderCalendar);
+
+    // Edit Revenue Targets Triggers
+    const openRevTargets = () => {
+      document.getElementById('input-target-weekly').value = AppState.revenueGoals.weekly;
+      document.getElementById('input-target-monthly').value = AppState.revenueGoals.monthly;
+      document.getElementById('input-target-yearly').value = AppState.revenueGoals.yearly;
+      document.getElementById('modal-revenue-targets').classList.remove('hidden');
+    };
+
+    document.getElementById('btn-edit-target-week').addEventListener('click', openRevTargets);
+    document.getElementById('btn-edit-target-month').addEventListener('click', openRevTargets);
+    document.getElementById('btn-edit-target-year').addEventListener('click', openRevTargets);
+    document.getElementById('btn-edit-revenue-benchmarks').addEventListener('click', openRevTargets);
+
+    document.getElementById('btn-top-add-shift').addEventListener('click', () => openShiftModal());
+    document.getElementById('btn-cal-add-shift-btn').addEventListener('click', () => openShiftModal());
+    document.getElementById('btn-open-add-crew-modal').addEventListener('click', () => openCrewMemberModal());
+    document.getElementById('btn-open-create-goal').addEventListener('click', () => openGoalModal());
+
+    // Export Backup JSON
+    document.getElementById('btn-save-export').addEventListener('click', () => {
+      saveState();
+      const blob = new Blob([JSON.stringify(AppState, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `juniors-pro-finish-calendar-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      showToast('Exported backup file!');
+    });
+
+    // Initialize application on load
+    loadState();
+    updateCrewFilterSelect();
+    updateRevenuePacingAndKPIs();
+    renderCalendar();
+    renderCrewRoster();
+    renderShiftsTable();
+    renderGoalsViews();
+  </script>
+</body>
+</html>
